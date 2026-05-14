@@ -1,0 +1,224 @@
+/* ui/static/css/style.css */
+
+:root {
+    /* Color Palette */
+    --bg-color: #f9f9ff;
+    --card-bg: #ffffff;
+    --primary: #4f46e5;
+    --primary-hover: #4338ca;
+    --text-main: #141b2b;
+    --text-muted: #464555;
+    --input-bg: #f3f4f6;
+    
+    /* Typography */
+    --font-main: 'Inter', sans-serif;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    font-family: var(--font-main);
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.game-container {
+    width: 100%;
+    max-width: 450px;
+    padding: 20px;
+}
+
+.game-card {
+    background-color: var(--card-bg);
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(79, 70, 229, 0.1);
+    padding: 40px 30px;
+    text-align: center;
+}
+
+.icon-wrapper {
+    background-color: #e0e7ff;
+    color: var(--primary);
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 24px auto;
+}
+
+.icon-wrapper .material-symbols-outlined {
+    font-size: 40px;
+}
+
+h1 {
+    font-size: 28px;
+    margin: 0 0 10px 0;
+}
+
+.message {
+    font-size: 18px;
+    color: var(--text-muted);
+    margin-bottom: 30px;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+label {
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--text-muted);
+}
+
+input[type="number"] {
+    background-color: var(--input-bg);
+    border: 2px solid transparent;
+    border-radius: 8px;
+    padding: 15px;
+    font-size: 20px;
+    text-align: center;
+    outline: none;
+    transition: all 0.2s;
+}
+
+input[type="number"]:focus {
+    border-color: var(--primary);
+    background-color: #fff;
+}
+
+/* Remove default spinner arrows from number inputs */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.btn {
+    background-color: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 15px 30px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    width: 100%;
+    transition: background-color 0.2s, transform 0.1s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.refresh-btn {
+    background-color: var(--input-bg);
+    color: var(--text-main);
+    padding: 8px 16px;
+    border-radius: 9999px; /* Creates a pill shape */
+    font-weight: 600;
+    font-size: 14px;
+    border: 1px solid #e5e7eb;
+}
+
+.refresh-btn:hover {
+    background-color: var(--primary-hover);
+}
+
+.btn:hover {
+    background-color: var(--primary-hover);
+}
+
+.btn:active {
+    transform: scale(0.98);
+}
+
+/* --- Guess History Styles --- */
+
+.guess-history {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #e5e7eb;
+}
+
+.guess-history h3 {
+    font-size: 14px;
+    color: var(--text-muted);
+    letter-spacing: 0.05em;
+    margin: 0 0 15px 0;
+}
+
+.guess-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+}
+
+.guess-tag {
+    background-color: var(--input-bg);
+    color: var(--text-main);
+    padding: 8px 16px;
+    border-radius: 9999px; /* Creates a pill shape */
+    font-weight: 600;
+    font-size: 14px;
+    border: 1px solid #e5e7eb;
+}
+
+
+/* --- Leaderboard Styles --- */
+.leaderboard-card {
+    background-color: var(--card-bg);
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(79, 70, 229, 0.1);
+    padding: 25px;
+    margin-top: 20px;
+}
+
+.leaderboard-card h3 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin: 0 0 20px 0;
+    color: var(--text-main);
+    font-size: 18px;
+}
+
+.leaderboard-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.leaderboard-table th {
+    text-align: left;
+    color: var(--text-muted);
+    font-size: 14px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--input-bg);
+}
+
+.leaderboard-table td {
+    padding: 12px 0;
+    border-bottom: 1px solid var(--input-bg);
+    font-weight: 600;
+}
+
+.leaderboard-table tr:last-child td {
+    border-bottom: none;
+}
+
+.empty-state {
+    text-align: center;
+    color: var(--text-muted);
+    font-style: italic;
+}

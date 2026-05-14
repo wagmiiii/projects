@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Higher or Lower</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@400,1&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="/static/css/style.css"/>
+</head>
+<body>
+
+    <main class="game-container">
+        <!-- The Game Card -->
+        <div class="game-card">
+            
+            <div class="user-header">
+                <div class="user-info">
+                    <span class="material-symbols-outlined" style="font-size: 18px;">account_circle</span>
+                    <strong>{{.Username}}</strong>
+                </div>
+                <a href="/logout" class="logout-link">
+                    <span class="material-symbols-outlined" style="font-size: 16px;">logout</span>
+                    logout
+                </a>
+            </div>
+
+            <div class="icon-wrapper">
+                <span class="material-symbols-outlined">videogame_asset</span>
+            </div>
+            
+            <h1>higher or lower</h1>
+            
+            <!-- FIXED: Prefixed with .Game. -->
+            <p class="message">{{.Game.Message}}</p>
+            
+            <!-- FIXED: Prefixed with .Game. -->
+            {{if not .Game.GameOver}}
+                <form action="/" method="POST">
+                    <div class="input-group">
+                        <label for="guess">your Guess (0 - 100)</label>
+                        <input id="guess" name="guess" placeholder="enter your guess" required autofocus type="number"/>
+                    </div>
+                    <button class="btn" type="submit">guess</button>
+                </form>
+            {{else}}
+                <form action="/reset" method="POST">
+                    <button class="btn" type="submit">
+                        <span class="material-symbols-outlined">refresh</span>
+                        play again
+                    </button>
+                </form>
+            {{end}}
+
+            <!-- FIXED: Prefixed with .Game. -->
+            {{if gt (len .Game.Guesses) 0}}
+                <div class="guess-history">
+                    <h3>Previous Guesses</h3>
+                    <div class="guess-tags">
+                        <!-- FIXED: Prefixed with .Game. -->
+                        {{range .Game.Guesses}}
+                            <span class="guess-tag">{{.}}</span>
+                        {{end}}
+                    </div>
+                </div>
+            {{end}}
+        </div>
+
+        <!-- The Leaderboard Card -->
+        <div class="leaderboard-card">
+            <h3><span class="material-symbols-outlined">leaderboard</span>top players</h3>
+            {{if gt (len .TopPlayers) 0}}
+                <table class="leaderboard-table">
+                    <tr>
+                        <th>player</th>
+                        <th>wins</th>
+                        <th>played</th>
+                        <th>win ratio</th>
+                    </tr>
+                    {{range .TopPlayers}}
+                    <tr>
+                        <td>{{.Username}}</td>
+                        <td>{{.Wins}}</td>
+                        <td>{{.GamesPlayed}}</td>
+                        <td>{{.WinRatio}}%</td>
+
+                    </tr>
+                    {{end}}
+                </table>
+            {{else}}
+                <p class="empty-state">no players yet. be the first!</p>
+            {{end}}
+        </div>
+
+    </main>
+
+</body>
+</html>
