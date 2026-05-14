@@ -1,16 +1,14 @@
 package game
 
 import (
-	"encoding/json"
+	"database/sql"
 	"fmt"
-	"math"
+	"log"
 	"math/rand"
-	"os"
-	"sort"
-	"sync"
 )
 
-// GameState holds the state of a single game.
+// --- GAME LOGIC ---
+
 type GameState struct {
 	Target         int
 	GuessesAllowed int
@@ -20,122 +18,92 @@ type GameState struct {
 	GameOver       bool
 }
 
-// New initializes and returns a pointer to a fresh GameState.
 func New() *GameState {
 	return &GameState{
 		Target:         rand.Intn(101),
 		GuessesAllowed: 5,
 		GuessesTaken:   0,
 		Guesses:        []int{},
-		Message:        "welcome! make your first guess.",
+		Message:        "Welcome! Make your first guess.",
 		GameOver:       false,
 	}
 }
 
-// CheckGuess evaluates the user's input and updates the game state.
 func (g *GameState) CheckGuess(guess int) {
 	g.GuessesTaken++
 	g.Guesses = append(g.Guesses, guess)
 	guessesLeft := g.GuessesAllowed - g.GuessesTaken
 
 	if guess == g.Target {
-		g.Message = "good job, you guessed it!"
+		g.Message = "BIM!! Good job, you guessed it!"
 		g.GameOver = true
 	} else if g.GuessesTaken >= g.GuessesAllowed {
-		g.Message = fmt.Sprintf("chaii, so sorrry. the answer was %d.", g.Target)
+		g.Message = fmt.Sprintf("Chaii, so sorry, the answer was %d.", g.Target)
 		g.GameOver = true
 	} else if guess < g.Target {
-		g.Message = fmt.Sprintf("the number is higher! You have %d guesses left.", guessesLeft)
+		g.Message = fmt.Sprintf("Oh snap!! The number is higher! You have %d guesses left.", guessesLeft)
 	} else {
-		g.Message = fmt.Sprintf("the number is lower! You have %d guesses left.", guessesLeft)
+		g.Message = fmt.Sprintf("Oh snap!! The number is lower! You have %d guesses left.", guessesLeft)
 	}
 }
 
 // --- LEADERBOARD LOGIC ---
 
-// Player holds the stats for a single user
 type Player struct {
-	Username    string  `json:"username"`
-	GamesPlayed int     `json:"gamesPlayed"`
-	Wins        int     `json:"wins"`
-	Losses      int     `json:"losses"`
-	WinRatio    float64 `json:"winRatio"`
+	Username    string `json:"username"`
+	GamesPlayed int    `json:"gamesPlayed"`
+	Wins        int    `json:"wins"`
+	Losses      int    `json:"losses"`
+	WinRatio    int    `json:"winRatio"` // Catch the generated percentage
 }
 
-// Leaderboard manages the map of players and file saving.
 type Leaderboard struct {
-	Players map[string]Player `json:"players"`
-	mu      sync.Mutex
+	DB *sql.DB
 }
 
-// LoadLeaderboard reads the JSON file and turns it into Go structs
-func LoadLeaderboard(filename string) *Leaderboard {
-	lb := &Leaderboard{
-		Players: make(map[string]Player),
-	}
-
-	fileData, err := os.ReadFile(filename)
-	if err != nil {
-		return lb // File doesn't exist yet, return empty leaderboard
-	}
-
-	json.Unmarshal(fileData, &lb.Players)
-	return lb
-}
-
-// Save writes the current Go map back into the JSON file
-func (lb *Leaderboard) Save(filename string) error {
-	lb.mu.Lock()
-	defer lb.mu.Unlock()
-
-	jsonData, err := json.MarshalIndent(lb.Players, "", "  ")
-	if err != nil {
-		return err
-	}
-
-	return os.WriteFile(filename, jsonData, 0644)
-}
-
-// RecordGame updates a player's stats and saves to the file
+// RecordGame saves the result to Supabase
 func (lb *Leaderboard) RecordGame(username string, won bool) {
-	lb.mu.Lock()
-
-	player, exists := lb.Players[username]
-	if !exists {
-		player = Player{Username: username}
-	}
-
-	player.GamesPlayed++
+	winsToAdd := 0
+	lossesToAdd := 0
 	if won {
-		player.Wins++
-		player.WinRatio = math.Round(float64(player.Wins) / float64(player.GamesPlayed) * 100)
+		winsToAdd = 1
 	} else {
-		player.Losses++
-		player.WinRatio = math.Round(float64(player.Wins) / float64(player.GamesPlayed) * 100)
+		lossesToAdd = 1
 	}
 
-	lb.Players[username] = player
-	lb.mu.Unlock()
-
-	lb.Save("leaderboard.json")
+	query := `
+		INSERT INTO leaderboard (username, games_played, wins, losses)
+		VALUES ($1, 1, $2, $3)
+		ON CONFLICT (username)
+		DO UPDATE SET
+			games_played = leaderboard.games_played + 1,
+			wins = leaderboard.wins + $2,
+			losses = leaderboard.losses + $3;
+	`
+	
+	_, err := lb.DB.Exec(query, username, winsToAdd, lossesToAdd)
+	if err != nil {
+		log.Println("Error saving score to database:", err)
+	}
 }
 
-// GetTopPlayers returns a sorted slice of the best players
+// GetTopPlayers pulls the leaderboard, including the generated win_ratio
 func (lb *Leaderboard) GetTopPlayers(limit int) []Player {
-	lb.mu.Lock()
-	defer lb.mu.Unlock()
+	query := `SELECT username, games_played, wins, losses, win_ratio FROM leaderboard ORDER BY win_ratio DESC LIMIT $1`
+	
+	rows, err := lb.DB.Query(query, limit)
+	if err != nil {
+		log.Println("Error fetching leaderboard:", err)
+		return []Player{}
+	}
+	defer rows.Close()
 
 	var players []Player
-	for _, p := range lb.Players {
-		players = append(players, p)
-	}
-
-	sort.Slice(players, func(i, j int) bool {
-		return players[i].WinRatio > players[j].WinRatio
-	})
-
-	if len(players) > limit {
-		return players[:limit]
+	for rows.Next() {
+		var p Player
+		if err := rows.Scan(&p.Username, &p.GamesPlayed, &p.Wins, &p.Losses, &p.WinRatio); err == nil {
+			players = append(players, p)
+		}
 	}
 	return players
 }

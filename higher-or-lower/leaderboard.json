@@ -6,12 +6,19 @@
     "losses": 2,
     "winRatio": 0
   },
+  "CHASE22": {
+    "username": "CHASE22",
+    "gamesPlayed": 5,
+    "wins": 1,
+    "losses": 4,
+    "winRatio": 20
+  },
   "Chase": {
     "username": "Chase",
-    "gamesPlayed": 50,
+    "gamesPlayed": 51,
     "wins": 14,
-    "losses": 36,
-    "winRatio": 0
+    "losses": 37,
+    "winRatio": 27
   },
   "GRIITTYY": {
     "username": "GRIITTYY",
@@ -20,12 +27,19 @@
     "losses": 7,
     "winRatio": 0
   },
+  "Hollujay007": {
+    "username": "Hollujay007",
+    "gamesPlayed": 6,
+    "wins": 0,
+    "losses": 6,
+    "winRatio": 0
+  },
   "Nigga": {
     "username": "Nigga",
-    "gamesPlayed": 16,
+    "gamesPlayed": 18,
     "wins": 2,
-    "losses": 14,
-    "winRatio": 13
+    "losses": 16,
+    "winRatio": 11
   },
   "Tim": {
     "username": "Tim",
@@ -41,12 +55,33 @@
     "losses": 25,
     "winRatio": 0
   },
+  "buck2.0": {
+    "username": "buck2.0",
+    "gamesPlayed": 29,
+    "wins": 4,
+    "losses": 25,
+    "winRatio": 14
+  },
+  "c": {
+    "username": "c",
+    "gamesPlayed": 1,
+    "wins": 0,
+    "losses": 1,
+    "winRatio": 0
+  },
   "chijoseph": {
     "username": "chijoseph",
     "gamesPlayed": 2,
     "wins": 1,
     "losses": 1,
     "winRatio": 0
+  },
+  "dammyfayo": {
+    "username": "dammyfayo",
+    "gamesPlayed": 15,
+    "wins": 1,
+    "losses": 14,
+    "winRatio": 7
   },
   "dillon": {
     "username": "dillon",
@@ -57,24 +92,24 @@
   },
   "hollujay": {
     "username": "hollujay",
-    "gamesPlayed": 40,
-    "wins": 11,
-    "losses": 29,
-    "winRatio": 28
+    "gamesPlayed": 48,
+    "wins": 13,
+    "losses": 35,
+    "winRatio": 27
   },
   "kamz": {
     "username": "kamz",
-    "gamesPlayed": 13,
-    "wins": 4,
+    "gamesPlayed": 17,
+    "wins": 8,
     "losses": 9,
-    "winRatio": 0
+    "winRatio": 47
   },
   "larry": {
     "username": "larry",
-    "gamesPlayed": 4,
-    "wins": 2,
+    "gamesPlayed": 5,
+    "wins": 3,
     "losses": 2,
-    "winRatio": 0
+    "winRatio": 60
   },
   "pwaleoj": {
     "username": "pwaleoj",
@@ -85,10 +120,10 @@
   },
   "sammy billions": {
     "username": "sammy billions",
-    "gamesPlayed": 7,
+    "gamesPlayed": 10,
     "wins": 1,
-    "losses": 6,
-    "winRatio": 0
+    "losses": 9,
+    "winRatio": 10
   },
   "smog": {
     "username": "smog",
@@ -96,6 +131,13 @@
     "wins": 1,
     "losses": 1,
     "winRatio": 0
+  },
+  "victor": {
+    "username": "victor",
+    "gamesPlayed": 5,
+    "wins": 2,
+    "losses": 3,
+    "winRatio": 40
   },
   "wagmi": {
     "username": "wagmi",

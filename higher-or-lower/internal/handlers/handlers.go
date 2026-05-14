@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"database/sql"
 	"html/template"
 	"net/http"
 	"strconv"
@@ -11,7 +12,6 @@ import (
 	"higher-or-lower/internal/game"
 )
 
-// PageData holds everything the index.tmpl needs
 type PageData struct {
 	Username   string
 	Game       *game.GameState
@@ -19,21 +19,21 @@ type PageData struct {
 }
 
 var (
-	sessions  = make(map[string]*game.GameState)
-	sessionMu sync.Mutex
-
+	sessions   = make(map[string]*game.GameState)
+	sessionMu  sync.Mutex
+	
 	globalLeaderboard *game.Leaderboard
 	indexTmpl         *template.Template
 	loginTmpl         *template.Template
 )
 
-func init() {
-	globalLeaderboard = game.LoadLeaderboard("leaderboard.json")
+// InitHandlers connects the handlers to the DB and loads templates
+func InitHandlers(db *sql.DB) {
+	globalLeaderboard = &game.Leaderboard{DB: db}
 	indexTmpl = template.Must(template.ParseFiles("ui/html/index.tmpl"))
 	loginTmpl = template.Must(template.ParseFiles("ui/html/login.tmpl"))
 }
 
-// getUsername checks the browser for our "player_name" cookie
 func getUsername(r *http.Request) string {
 	cookie, err := r.Cookie("player_name")
 	if err != nil {
@@ -42,7 +42,6 @@ func getUsername(r *http.Request) string {
 	return cookie.Value
 }
 
-// LoginHandler displays the login form and sets the cookie
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
 		loginTmpl.Execute(w, nil)
@@ -63,7 +62,6 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// LogoutHandler deletes the cookie
 func LogoutHandler(w http.ResponseWriter, r *http.Request) {
 	http.SetCookie(w, &http.Cookie{
 		Name:    "player_name",
@@ -74,7 +72,6 @@ func LogoutHandler(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/login", http.StatusSeeOther)
 }
 
-// GameHandler is our main engine
 func GameHandler(w http.ResponseWriter, r *http.Request) {
 	username := getUsername(r)
 	if username == "" {
@@ -96,7 +93,7 @@ func GameHandler(w http.ResponseWriter, r *http.Request) {
 			guessStr := r.FormValue("guess")
 			guess, err := strconv.Atoi(guessStr)
 			if err != nil {
-				playerGame.Message = "please enter a valid number."
+				playerGame.Message = "Please enter a valid number."
 			} else {
 				playerGame.CheckGuess(guess)
 
@@ -111,13 +108,17 @@ func GameHandler(w http.ResponseWriter, r *http.Request) {
 	data := PageData{
 		Username:   username,
 		Game:       playerGame,
-		TopPlayers: globalLeaderboard.GetTopPlayers(15),
+		TopPlayers: globalLeaderboard.GetTopPlayers(5), // Top 5
 	}
 	indexTmpl.Execute(w, data)
 }
 
-// ResetHandler starts a new game for the logged-in user
 func ResetHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
 	username := getUsername(r)
 	if username != "" {
 		sessionMu.Lock()

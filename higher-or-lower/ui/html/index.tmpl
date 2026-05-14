@@ -29,7 +29,7 @@
                 <span class="material-symbols-outlined">videogame_asset</span>
             </div>
             
-            <h1>higher or lower</h1>
+            <h1>5 GUESSES</h1>
             
             <!-- FIXED: Prefixed with .Game. -->
             <p class="message">{{.Game.Message}}</p>
@@ -38,8 +38,8 @@
             {{if not .Game.GameOver}}
                 <form action="/" method="POST">
                     <div class="input-group">
-                        <label for="guess">your Guess (0 - 100)</label>
-                        <input id="guess" name="guess" placeholder="enter your guess" required autofocus type="number"/>
+                        <label for="guess">your guess (0 - 100)</label>
+                        <input id="guess" name="guess" placeholder="enter your guess..." required autofocus type="number"/>
                     </div>
                     <button class="btn" type="submit">guess</button>
                 </form>
@@ -55,7 +55,7 @@
             <!-- FIXED: Prefixed with .Game. -->
             {{if gt (len .Game.Guesses) 0}}
                 <div class="guess-history">
-                    <h3>Previous Guesses</h3>
+                    <h3>previous guesses</h3>
                     <div class="guess-tags">
                         <!-- FIXED: Prefixed with .Game. -->
                         {{range .Game.Guesses}}
@@ -75,20 +75,20 @@
                         <th>player</th>
                         <th>wins</th>
                         <th>played</th>
-                        <th>win ratio</th>
+                        <th>win %</th>
                     </tr>
                     {{range .TopPlayers}}
                     <tr>
                         <td>{{.Username}}</td>
                         <td>{{.Wins}}</td>
                         <td>{{.GamesPlayed}}</td>
-                        <td>{{.WinRatio}}%</td>
+                        <td style="color: var(--primary); font-weight: 700;">{{.WinRatio}}%</td>
 
                     </tr>
                     {{end}}
                 </table>
             {{else}}
-                <p class="empty-state">no players yet. be the first!</p>
+                <p class="empty-state">no players yet... be the first!</p>
             {{end}}
         </div>
 
