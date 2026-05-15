@@ -29,7 +29,7 @@
                 <span class="material-symbols-outlined">videogame_asset</span>
             </div>
             
-            <h1>5 GUESSES</h1>
+            <h1>Higher or Lower...</h1>
             
             <!-- FIXED: Prefixed with .Game. -->
             <div style="margin-bottom: 15px;">
@@ -42,7 +42,7 @@
                 <form action="/" method="POST">
                     <div class="input-group">
                         <label for="guess">Your Guess (0 - {{.Game.MaxNumber}})</label>
-                        <input id="guess" name="guess" placeholder="0" required autofocus type="number"/>
+                        <input id="guess" name="guess" placeholder="Enter your guess" required autofocus type="number"/>
                     </div>
                     <button class="btn" type="submit">Guess</button>
                 </form>
@@ -83,7 +83,7 @@
                         <th>player</th>
                         <th>wins</th>
                         <th>played</th>
-                        <th>win %</th>
+                        <th>win ratio</th>
                     </tr>
                     {{range .TopPlayers}}
                     <tr>
