@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Higher or Lower</title>
+    <title>five-guesses</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@400,1&display=swap" rel="stylesheet"/>
     <link rel="stylesheet" href="/static/css/style.css"/>
@@ -29,11 +29,11 @@
                 <span class="material-symbols-outlined">videogame_asset</span>
             </div>
             
-            <h1>Higher or Lower...</h1>
+            <h1>five-guesses</h1>
             
             <!-- FIXED: Prefixed with .Game. -->
             <div style="margin-bottom: 15px;">
-                <span class="difficulty-badge">Mode: {{.Game.Difficulty}}</span>
+                <span class="difficulty-badge">mode: {{.Game.Difficulty}}</span>
             </div>
 
             <p class="message">{{.Game.Message}}</p>
@@ -41,21 +41,21 @@
             {{if not .Game.GameOver}}
                 <form action="/" method="POST">
                     <div class="input-group">
-                        <label for="guess">Your Guess (0 - {{.Game.MaxNumber}})</label>
+                        <label for="guess">your guess (0 - {{.Game.MaxNumber}})</label>
                         <input id="guess" name="guess" placeholder="Enter your guess" required autofocus type="number"/>
                     </div>
-                    <button class="btn" type="submit">Guess</button>
+                    <button class="btn" type="submit">guess</button>
                 </form>
             {{else}}
                 <form action="/reset" method="POST" class="reset-form">
                     <select name="difficulty" class="difficulty-select">
-                        <option value="Easy">Easy (0-50, 5 Guesses)</option>
-                        <option value="Standard" selected>Standard (0-100, 5 Guesses)</option>
-                        <option value="Hard">Hard (0-500, 8 Guesses)</option>
+                        <option value="Easy">easy (0-50, 5 guesses)</option>
+                        <option value="Standard" selected>standard (0-100, 5 guesses)</option>
+                        <option value="Hard">hard (0-500, 8 guesses)</option>
                     </select>
                     <button class="btn" type="submit">
                         <span class="material-symbols-outlined">refresh</span>
-                        Play Again
+                        play again
                     </button>
                 </form>
             {{end}}
@@ -74,33 +74,53 @@
             {{end}}
         </div>
 
-        <!-- The Leaderboard Card -->
-        <div class="leaderboard-card">
-            <h3><span class="material-symbols-outlined">leaderboard</span>top players</h3>
-            {{if gt (len .TopPlayers) 0}}
-                <table class="leaderboard-table">
-                    <tr>
-                        <th>player</th>
-                        <th>wins</th>
-                        <th>played</th>
-                        <th>win ratio</th>
-                    </tr>
-                    {{range .TopPlayers}}
-                    <tr>
-                        <td>{{.Username}}</td>
-                        <td>{{.Wins}}</td>
-                        <td>{{.GamesPlayed}}</td>
-                        <td style="color: var(--primary); font-weight: 700;">{{.WinRatio}}%</td>
+        <div class="bottom-row">
+            
+            <div class="leaderboard-card">
+                <h3><span class="material-symbols-outlined">leaderboard</span> top players</h3>
+                {{if gt (len .TopPlayers) 0}}
+                    <table class="leaderboard-table">
+                        <tr>
+                            <th>player</th>
+                            <th>wins</th>
+                            <th>played</th>
+                            <th>win ratio</th>
+                        </tr>
+                        {{range .TopPlayers}}
+                        <tr>
+                            <td>{{.Username}}</td>
+                            <td>{{.Wins}}</td>
+                            <td>{{.GamesPlayed}}</td>
+                            <td style="color: var(--primary); font-weight: 700;">{{.WinRatio}}%</td>
+                        </tr>
+                        {{end}}
+                    </table>
+                {{else}}
+                    <p class="empty-state">no players yet. be the first!</p>
+                {{end}}
+            </div>
 
-                    </tr>
-                    {{end}}
-                </table>
-            {{else}}
-                <p class="empty-state">no players yet... be the first!</p>
-            {{end}}
-        </div>
+            <div class="help-card">
+                <h3><span class="material-symbols-outlined">help</span> how to play</h3>
+                
+                <p style="margin-top: 0; margin-bottom: 15px; color: var(--text-muted); font-size: 14px;">
+                    welcome to five-guesses! your goal is to find the secret number before you run out of guesses.
+                </p>
 
+                <ul>
+                    <li><strong>1. choose your mode:</strong>
+                        <ul>
+                            <li><em>easy:</em> 0 to 50 (6 Guesses)</li>
+                            <li><em>standard:</em> 0 to 100 (5 Guesses)</li>
+                            <li><em>hard:</em> 0 to 500 (8 Guesses)</li>
+                        </ul>
+                    </li>
+                    <li><strong>2. follow the clues:</strong> after every guess, the game will tell you if the secret number is <strong>higher</strong> or <strong>lower</strong> than your guess.</li>
+                    <li><strong>3. climb the ranks:</strong> winning increases your global win percentage on the leaderboard. losing drops it. think carefully!</li>
+                </ul>
+            </div>
+
+        </div> 
     </main>
-
 </body>
 </html>
