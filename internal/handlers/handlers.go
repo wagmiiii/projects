@@ -108,7 +108,7 @@ func GameHandler(w http.ResponseWriter, r *http.Request) {
 	data := PageData{
 		Username:   username,
 		Game:       playerGame,
-		TopPlayers: globalLeaderboard.GetTopPlayers(5), // Top 5
+		TopPlayers: globalLeaderboard.GetTopPlayers(50), // Top 5
 	}
 	indexTmpl.Execute(w, data)
 }
