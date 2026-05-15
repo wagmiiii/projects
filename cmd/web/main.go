@@ -41,16 +41,15 @@ func main() {
 
 	// 2. Initialize Handlers with the DB
 	handlers.InitHandlers(db)
+	// Map the URL paths to the exported functions in the handlers package
+	mux := http.NewServeMux()
 
 	// Serve static files (CSS, images, JS) from the ui/static directory
 	// 1. Point to the folder where the static files live
 	fileServer := http.FileServer(http.Dir("./ui/static/"))
 
 	// 2. Strip the "/static" prefix from the URL, and serve the files
-	http.Handle("/static/", http.StripPrefix("/static", fileServer))
-
-	// Map the URL paths to the exported functions in the handlers package
-	mux := http.NewServeMux()
+	mux.Handle("/static/", http.StripPrefix("/static", fileServer))
 
 	mux.HandleFunc("/", loggingMiddleware(handlers.GameHandler))
 	mux.HandleFunc("/reset", loggingMiddleware(handlers.ResetHandler))
