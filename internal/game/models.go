@@ -10,6 +10,8 @@ import (
 // --- GAME LOGIC ---
 
 type GameState struct {
+	Difficulty     string
+	MaxNumber      int
 	Target         int
 	GuessesAllowed int
 	GuessesTaken   int
@@ -18,10 +20,28 @@ type GameState struct {
 	GameOver       bool
 }
 
-func New() *GameState {
+func New(difficulty string) *GameState {
+	maxNumber := 100
+	guessesAllowed := 5
+
+	switch difficulty {
+	case "Easy":
+		maxNumber = 50
+		guessesAllowed = 5
+	case "Hard":
+		maxNumber = 500
+		guessesAllowed = 8
+	default:
+		difficulty = "Standard"
+		maxNumber = 100
+		guessesAllowed = 5
+	}
+
 	return &GameState{
-		Target:         rand.Intn(101),
-		GuessesAllowed: 5,
+		Difficulty:     difficulty,
+		MaxNumber:      maxNumber,
+		Target:         rand.Intn(maxNumber + 1),
+		GuessesAllowed: guessesAllowed,
 		GuessesTaken:   0,
 		Guesses:        []int{},
 		Message:        "Welcome! Make your first guess.",
@@ -80,7 +100,7 @@ func (lb *Leaderboard) RecordGame(username string, won bool) {
 			wins = leaderboard.wins + $2,
 			losses = leaderboard.losses + $3;
 	`
-	
+
 	_, err := lb.DB.Exec(query, username, winsToAdd, lossesToAdd)
 	if err != nil {
 		log.Println("Error saving score to database:", err)
@@ -90,7 +110,7 @@ func (lb *Leaderboard) RecordGame(username string, won bool) {
 // GetTopPlayers pulls the leaderboard, including the generated win_ratio
 func (lb *Leaderboard) GetTopPlayers(limit int) []Player {
 	query := `SELECT username, games_played, wins, losses, win_ratio FROM leaderboard ORDER BY win_ratio DESC LIMIT $1`
-	
+
 	rows, err := lb.DB.Query(query, limit)
 	if err != nil {
 		log.Println("Error fetching leaderboard:", err)

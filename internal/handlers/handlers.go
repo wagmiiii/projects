@@ -82,7 +82,7 @@ func GameHandler(w http.ResponseWriter, r *http.Request) {
 	sessionMu.Lock()
 	playerGame, exists := sessions[username]
 	if !exists {
-		playerGame = game.New()
+		playerGame = game.New("Standard")
 		sessions[username] = playerGame
 	}
 	sessionMu.Unlock()
@@ -119,10 +119,16 @@ func ResetHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	err := r.ParseForm()
+	difficulty := "Standard"
+	if err == nil && r.FormValue("difficulty") != "" {
+		difficulty = r.FormValue("difficulty")
+	}
+
 	username := getUsername(r)
 	if username != "" {
 		sessionMu.Lock()
-		sessions[username] = game.New()
+		sessions[username] = game.New(difficulty)
 		sessionMu.Unlock()
 	}
 	http.Redirect(w, r, "/", http.StatusSeeOther)

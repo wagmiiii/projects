@@ -32,22 +32,30 @@
             <h1>5 GUESSES</h1>
             
             <!-- FIXED: Prefixed with .Game. -->
+            <div style="margin-bottom: 15px;">
+                <span class="difficulty-badge">Mode: {{.Game.Difficulty}}</span>
+            </div>
+
             <p class="message">{{.Game.Message}}</p>
             
-            <!-- FIXED: Prefixed with .Game. -->
             {{if not .Game.GameOver}}
                 <form action="/" method="POST">
                     <div class="input-group">
-                        <label for="guess">your guess (0 - 100)</label>
-                        <input id="guess" name="guess" placeholder="enter your guess..." required autofocus type="number"/>
+                        <label for="guess">Your Guess (0 - {{.Game.MaxNumber}})</label>
+                        <input id="guess" name="guess" placeholder="0" required autofocus type="number"/>
                     </div>
-                    <button class="btn" type="submit">guess</button>
+                    <button class="btn" type="submit">Guess</button>
                 </form>
             {{else}}
-                <form action="/reset" method="POST">
+                <form action="/reset" method="POST" class="reset-form">
+                    <select name="difficulty" class="difficulty-select">
+                        <option value="Easy">Easy (0-50, 6 Guesses)</option>
+                        <option value="Standard" selected>Standard (0-100, 5 Guesses)</option>
+                        <option value="Hard">Hard (0-500, 8 Guesses)</option>
+                    </select>
                     <button class="btn" type="submit">
                         <span class="material-symbols-outlined">refresh</span>
-                        play again
+                        Play Again
                     </button>
                 </form>
             {{end}}
