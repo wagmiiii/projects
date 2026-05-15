@@ -258,3 +258,70 @@ input[type="number"]::-webkit-outer-spin-button {
     border-color: var(--primary);
     background-color: #fff;
 }
+
+.game-card {
+    background-color: var(--card-bg);
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(79, 70, 229, 0.1);
+    padding: 30px;
+    text-align: center;
+    max-width: 450px;     /* NEW */
+    margin: 0 auto 20px auto; /* NEW: centers it and adds space below */
+}
+
+/* --- Bottom Row Layout --- */
+.bottom-row {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start; /* Keeps them aligned at the top */
+}
+
+/* Ensure both cards take up equal space, or stack on small screens */
+.leaderboard-card, .help-card {
+    flex: 1; 
+    min-width: 300px;
+    background-color: var(--card-bg);
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(79, 70, 229, 0.1);
+    padding: 25px;
+    margin-top: 0; /* Override the old top margin on the leaderboard */
+}
+
+/* --- Help Card Specific Styles --- */
+.help-card h3 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 20px 0;
+    color: var(--text-main);
+    font-size: 18px;
+}
+
+.help-card ul {
+    margin: 0;
+    padding-left: 20px;
+    color: var(--text-muted);
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.help-card li {
+    margin-bottom: 10px;
+}
+
+.help-card ul ul {
+    margin-top: 8px;
+}
+
+/* --- Mobile Responsiveness --- */
+/* If the screen is smaller than ~700px, stack them vertically */
+@media (max-width: 700px) {
+    .bottom-row {
+        flex-direction: column;
+    }
+    
+    .leaderboard-card, .help-card {
+        width: 100%;
+        box-sizing: border-box;
+    }
+}
