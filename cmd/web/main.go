@@ -10,7 +10,7 @@ import (
 	// The PostgreSQL driver
 	_ "github.com/lib/pq"
 
-	"higher-or-lower/internal/handlers"
+	"github.com/wagmiiii/projects/internal/handlers"
 )
 
 func loggingMiddleware(next http.HandlerFunc) http.HandlerFunc {

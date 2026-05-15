@@ -9,7 +9,7 @@ import (
 	"time"
 
 	// Replace with your actual module path
-	"higher-or-lower/internal/game"
+	"github.com/wagmiiii/projects/internal/game"
 )
 
 type PageData struct {
