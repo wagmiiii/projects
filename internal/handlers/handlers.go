@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"database/sql"
+	"fmt"
 	"html/template"
 	"net/http"
 	"strconv"
@@ -19,9 +20,9 @@ type PageData struct {
 }
 
 var (
-	sessions   = make(map[string]*game.GameState)
-	sessionMu  sync.Mutex
-	
+	sessions  = make(map[string]*game.GameState)
+	sessionMu sync.Mutex
+
 	globalLeaderboard *game.Leaderboard
 	indexTmpl         *template.Template
 	loginTmpl         *template.Template
@@ -90,19 +91,34 @@ func GameHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodPost {
 		err := r.ParseForm()
 		if err == nil {
+			// 1. STATE VALIDATION: If the game is already over, ignore new guesses
+			if playerGame.GameOver {
+				http.Redirect(w, r, "/", http.StatusSeeOther)
+				return
+			}
+
 			guessStr := r.FormValue("guess")
 			guess, err := strconv.Atoi(guessStr)
 			if err != nil {
-				playerGame.Message = "Please enter a valid number."
+				playerGame.Message = "please enter a valid number."
+			} else if guess < 0 || guess > playerGame.MaxNumber {
+				// NEW: Server-side validation check
+				playerGame.Message = fmt.Sprintf("invalid input. please guess a number between 0 and %d.", playerGame.MaxNumber)
 			} else {
+				// Process the guess only if the game is active
 				playerGame.CheckGuess(guess)
 
+				// Check if this specific guess ended the game
 				if playerGame.GameOver {
 					won := (guess == playerGame.Target)
 					globalLeaderboard.RecordGame(username, won)
 				}
 			}
 		}
+
+		// 2. PRG PATTERN: Redirect to the same URL as a GET request
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
 	}
 
 	data := PageData{
