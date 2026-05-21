@@ -26,9 +26,6 @@ body {
 }
 
 .user-header {
-    position: absolute;
-    top: 20px;
-    right: 20px;
     background-color: var(--input-bg);
     padding: 10px 15px;
     border-radius: 9999px; /* Creates a pill shape */
@@ -36,6 +33,7 @@ body {
     color: var(--text-main);
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 8px;
 }
 
