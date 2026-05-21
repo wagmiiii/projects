@@ -12,16 +12,18 @@ import (
 
 func main() {
 	randomNumber := rand.Intn(101)
+	fmt.Println(randomNumber)
 
 	fmt.Println("welcome to higher or lower (0 - 100)")
 
 	reader := bufio.NewReader(os.Stdin)
 
 	success := false
+	count := 0
 
-	guesses := 0
 
-	for guesses < 5 {
+
+	for {
 		fmt.Print("enter a number: ")
 
 		input, err := reader.ReadString('\n')
@@ -42,22 +44,17 @@ func main() {
 		}
 		if guess < randomNumber {
 			fmt.Println("higher")
+			count++
 
-			guesses++
-
-			fmt.Println("you have", 5-guesses, "guesses left")
 
 		} else if guess > randomNumber {
 
 			fmt.Println("lower")
-
-			guesses++
-
-			fmt.Println("you have", 5-guesses, "guesses left")
+			count++
 
 		} else {
-
-			fmt.Println("good job, you guessed it")
+			count++
+			fmt.Println("good job, you guessed it with",count,"tries")
 
 			success = true
 

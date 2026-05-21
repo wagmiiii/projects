@@ -109,10 +109,10 @@ func GameHandler(w http.ResponseWriter, r *http.Request) {
 				playerGame.CheckGuess(guess)
 
 				// Check if this specific guess ended the game
-				if playerGame.GameOver {
-					won := (guess == playerGame.Target)
-					globalLeaderboard.RecordGame(username, won)
-				}
+				// Inside GameHandler POST block
+			if playerGame.GameOver {
+				globalLeaderboard.RecordWin(username, playerGame.GuessesTaken)
+			}
 			}
 		}
 

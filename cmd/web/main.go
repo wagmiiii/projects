@@ -39,16 +39,13 @@ func main() {
 	}
 	log.Println("Successfully connected to Supabase!")
 
-	// 2. Initialize Handlers with the DB
+	
 	handlers.InitHandlers(db)
-	// Map the URL paths to the exported functions in the handlers package
+	
 	mux := http.NewServeMux()
 
-	// Serve static files (CSS, images, JS) from the ui/static directory
-	// 1. Point to the folder where the static files live
 	fileServer := http.FileServer(http.Dir("./ui/static/"))
 
-	// 2. Strip the "/static" prefix from the URL, and serve the files
 	mux.Handle("/static/", http.StripPrefix("/static", fileServer))
 
 	mux.HandleFunc("/", loggingMiddleware(handlers.GameHandler))
@@ -59,7 +56,7 @@ func main() {
 	
 	port := os.Getenv("PORT")
 	if port == "" {
-		port = "8080" // Default for local development
+		port = "8000" // Default for local development
 	}
 
 	log.Printf("Server starting on port %s...\n", port)

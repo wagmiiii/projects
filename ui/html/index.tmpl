@@ -42,16 +42,29 @@
                 <form action="/" method="POST">
                     <div class="input-group">
                         <label for="guess">your guess (0 - {{.Game.MaxNumber}})</label>
-                        <input id="guess" name="guess" placeholder="Enter your guess" required autofocus type="number"/>
+                        
+                        <input 
+                            id="guess" 
+                            name="guess" 
+                            placeholder="Enter your guess" 
+                            required 
+                            autofocus 
+                            type="number"
+                            min="0"
+                            max="{{.Game.MaxNumber}}" 
+                        />
                     </div>
                     <button class="btn" type="submit">guess</button>
                 </form>
             {{else}}
                 <form action="/reset" method="POST" class="reset-form">
+                    <p style="margin-top: 0; margin-bottom: 10px; color: var(--text-muted); font-size: 14px;">
+                        {{if eq .Game.Result "win"}}congratulations on your win!{{else}}better luck next time!{{end}}
+                    </p>
                     <select name="difficulty" class="difficulty-select">
-                        <option value="Easy">easy (0-50, 5 guesses)</option>
-                        <option value="Standard" selected>standard (0-100, 5 guesses)</option>
-                        <option value="Hard">hard (0-500, 8 guesses)</option>
+                        <option value="Easy">easy (0-50)</option>
+                        <option value="Standard" selected>standard (0-100)</option>
+                        <option value="Hard">hard (0-500)</option>
                     </select>
                     <button class="btn" type="submit">
                         <span class="material-symbols-outlined">refresh</span>
@@ -82,16 +95,14 @@
                     <table class="leaderboard-table">
                         <tr>
                             <th>player</th>
-                            <th>wins</th>
-                            <th>played</th>
-                            <th>win ratio</th>
+                            <th>games played</th>
+                            <th>best score (tries)</th>
                         </tr>
                         {{range .TopPlayers}}
                         <tr>
                             <td>{{.Username}}</td>
-                            <td>{{.Wins}}</td>
                             <td>{{.GamesPlayed}}</td>
-                            <td style="color: var(--primary); font-weight: 700;">{{.WinRatio}}%</td>
+                            <td style="color: var(--primary); font-weight: 700;">{{.BestScore}}</td>
                         </tr>
                         {{end}}
                     </table>
@@ -110,16 +121,15 @@
                 <ul>
                     <li><strong>choose your mode:</strong>
                         <ul>
-                            <li><em>easy:</em> 0 to 50 (6 guesses)</li>
-                            <li><em>standard:</em> 0 to 100 (5 guesses)</li>
-                            <li><em>hard:</em> 0 to 500 (8 guesses)</li>
+                            <li><em>easy:</em> 0 to 50</li>
+                            <li><em>standard:</em> 0 to 100</li>
+                            <li><em>hard:</em> 0 to 500</li>
                         </ul>
                     </li>
                     <li><strong>follow the clues:</strong> after every guess, the game will tell you if the secret number is <strong>higher</strong> or <strong>lower</strong> than your guess.</li>
-                    <li><strong>climb the ranks:</strong> winning increases your global win percentage on the leaderboard. losing drops it. think carefully!</li>
+                    <li><strong>climb the ranks:</strong> guess the number in the fewest tries possible to top the leaderboard!</li>
                 </ul>
             </div>
-
         </div> 
     </main>
 </body>

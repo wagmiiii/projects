@@ -10,60 +10,50 @@ import (
 // --- GAME LOGIC ---
 
 type GameState struct {
-	Difficulty     string
-	MaxNumber      int
-	Target         int
-	GuessesAllowed int
-	GuessesTaken   int
-	Guesses        []int
-	Message        string
-	GameOver       bool
+	Difficulty   string
+	MaxNumber    int
+	Target       int
+	GuessesTaken int
+	Guesses      []int
+	Message      string
+	GameOver     bool
 }
 
 func New(difficulty string) *GameState {
 	maxNumber := 100
-	guessesAllowed := 5
 
 	switch difficulty {
 	case "Easy":
 		maxNumber = 50
-		guessesAllowed = 5
 	case "Hard":
 		maxNumber = 500
-		guessesAllowed = 8
 	default:
 		difficulty = "Standard"
 		maxNumber = 100
-		guessesAllowed = 5
 	}
 
 	return &GameState{
-		Difficulty:     difficulty,
-		MaxNumber:      maxNumber,
-		Target:         rand.Intn(maxNumber + 1),
-		GuessesAllowed: guessesAllowed,
-		GuessesTaken:   0,
-		Guesses:        []int{},
-		Message:        "Welcome! Make your first guess.",
-		GameOver:       false,
+		Difficulty:   difficulty,
+		MaxNumber:    maxNumber,
+		Target:       rand.Intn(maxNumber + 1),
+		GuessesTaken: 0,
+		Guesses:      []int{},
+		Message:      "Welcome! Make your first guess.",
+		GameOver:     false,
 	}
 }
 
 func (g *GameState) CheckGuess(guess int) {
 	g.GuessesTaken++
 	g.Guesses = append(g.Guesses, guess)
-	guessesLeft := g.GuessesAllowed - g.GuessesTaken
 
 	if guess == g.Target {
-		g.Message = "BIM!! Good job, you guessed it!"
-		g.GameOver = true
-	} else if g.GuessesTaken >= g.GuessesAllowed {
-		g.Message = fmt.Sprintf("Chaii, so sorry, the answer was %d.", g.Target)
+		g.Message = fmt.Sprintf("BIM!! Good job, you guessed it in %d tries!", g.GuessesTaken)
 		g.GameOver = true
 	} else if guess < g.Target {
-		g.Message = fmt.Sprintf("Oh snap!! The number is higher! You have %d guesses left.", guessesLeft)
+		g.Message = "Oh snap!! The number is higher!"
 	} else {
-		g.Message = fmt.Sprintf("Oh snap!! The number is lower! You have %d guesses left.", guessesLeft)
+		g.Message = "Oh snap!! The number is lower!"
 	}
 }
 
@@ -72,44 +62,34 @@ func (g *GameState) CheckGuess(guess int) {
 type Player struct {
 	Username    string `json:"username"`
 	GamesPlayed int    `json:"gamesPlayed"`
-	Wins        int    `json:"wins"`
-	Losses      int    `json:"losses"`
-	WinRatio    int    `json:"winRatio"` // Catch the generated percentage
+	BestScore   int    `json:"bestScore"` // Fewest tries taken
 }
 
 type Leaderboard struct {
 	DB *sql.DB
 }
 
-// RecordGame saves the result to Supabase
-func (lb *Leaderboard) RecordGame(username string, won bool) {
-	winsToAdd := 0
-	lossesToAdd := 0
-	if won {
-		winsToAdd = 1
-	} else {
-		lossesToAdd = 1
-	}
-
+// RecordWin updates the player's total games and their best (lowest) score.
+func (lb *Leaderboard) RecordWin(username string, triesTaken int) {
 	query := `
-		INSERT INTO leaderboard (username, games_played, wins, losses)
-		VALUES ($1, 1, $2, $3)
+		INSERT INTO leaderboard (username, games_played, best_score)
+		VALUES ($1, 1, $2)
 		ON CONFLICT (username)
 		DO UPDATE SET
 			games_played = leaderboard.games_played + 1,
-			wins = leaderboard.wins + $2,
-			losses = leaderboard.losses + $3;
+			best_score = LEAST(leaderboard.best_score, $2);
 	`
 
-	_, err := lb.DB.Exec(query, username, winsToAdd, lossesToAdd)
+	_, err := lb.DB.Exec(query, username, triesTaken)
 	if err != nil {
 		log.Println("Error saving score to database:", err)
 	}
 }
 
-// GetTopPlayers pulls the leaderboard, including the generated win_ratio
+// GetTopPlayers pulls the leaderboard ordered by the lowest best_score.
 func (lb *Leaderboard) GetTopPlayers(limit int) []Player {
-	query := `SELECT username, games_played, wins, losses, win_ratio FROM leaderboard ORDER BY win_ratio DESC LIMIT $1`
+	// ASC order because fewer tries is better
+	query := `SELECT username, games_played, best_score FROM leaderboard ORDER BY best_score ASC LIMIT $1`
 
 	rows, err := lb.DB.Query(query, limit)
 	if err != nil {
@@ -121,7 +101,7 @@ func (lb *Leaderboard) GetTopPlayers(limit int) []Player {
 	var players []Player
 	for rows.Next() {
 		var p Player
-		if err := rows.Scan(&p.Username, &p.GamesPlayed, &p.Wins, &p.Losses, &p.WinRatio); err == nil {
+		if err := rows.Scan(&p.Username, &p.GamesPlayed, &p.BestScore); err == nil {
 			players = append(players, p)
 		}
 	}
