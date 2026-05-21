@@ -25,6 +25,20 @@ body {
     justify-content: center;
 }
 
+.user-info {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background-color: var(--input-bg);
+    padding: 10px 15px;
+    border-radius: 9999px; /* Creates a pill shape */
+    font-size: 14px;
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
 .game-container {
     width: 100%;
     max-width: 450px;
