@@ -34,7 +34,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
+    gap: 18px;
 }
 
 .game-container {
@@ -60,7 +60,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 0 auto 24px auto;
+    margin: 24px auto 24px auto;
 }
 
 .icon-wrapper .material-symbols-outlined {
